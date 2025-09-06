@@ -4,12 +4,55 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdint.h>
 
 #define MAX_LINE 100 //idk why 100 i may increase or decrease
+
+//structs and enum
+typedef enum { //instruction formats (i made them up based on the instruction set)
+		A_TYPE, B_TYPE, C_TYPE, D_TYPE, E_TYPE, F_TYPE, G_TYPE, H_TYPE, I_TYPE
+} format_t; 
+
+typedef struct { //instructions
+	char *name; 
+	format_t format; 
+	uint8_t bits_15_to_12; 
+} instr_def_t; 
+//instruction definitions
+static instr_def_t instructions[] = {
+	{"add", A_TYPE, 0x0}, //a types
+	{"sub", A_TYPE, 0x1},
+	{"and", A_TYPE, 0x2},
+	{"or", A_TYPE, 0x3},
+	{"not", A_TYPE, 0x4},
+	{"shl", A_TYPE, 0x5},
+	{"shr", A_TYPE, 0x6},
+
+	{"ldi", B_TYPE, 0x7},//b type
+
+	{"ld", C_TYPE, 0x8}, //c type
+
+	{"st", D_TYPE, 0x9}, //d type
+
+	{"br", E_TYPE, 0xA}, //e type
+
+	{"bz", F_TYPE, 0xB}, //f types
+	{"bn", F_TYPE, 0xC}, 
+
+	{"jal", G_TYPE, 0xD}, //g type
+
+	{"jr", H_TYPE, 0xE}, //h type
+
+	{"quit", I_TYPE, 0xF}, // i type
+
+	{NULL, 0, 0}//sentinel
+}; 
 
 //function prototypes
 void remove_whitespace(char *s); 
 int assemble(char *input_file, char *output_file); 
+int get_reg_num(char *reg); 
+
 
 int main(int argc, char *argv[]) {	
 	if (argc != 3) {
@@ -61,14 +104,19 @@ int assemble(char *input_file, char *output_file) {
 			tokens[token_count++] = token;
 			token = strtok(NULL, " ,\t");
 		}
-		printf("intr: %s\n", tokens[0]);
-		printf("rw: %s\n", tokens[1]);
-		printf("ra: %s\n", tokens[2]); 
-		printf("rb: %s\n", tokens[3]);		
+		int rw = get_reg_num(tokens[1]);
+		printf("%d\n", rw); 	
 	} 
 	
 
 	return 0;
 }
 
+int get_reg_num(char *reg) { //func to return int version of reg 
+	int reg_num = atoi(reg + 1);
+	if (reg_num >=0 && reg_num <= 15) {
+		return reg_num; 
+	}
+	return -1; //invalid reg 
+}
 
