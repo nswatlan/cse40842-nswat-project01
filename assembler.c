@@ -18,6 +18,7 @@ typedef struct { //instructions
 	format_t format; 
 	uint8_t bits_15_to_12; 
 } instr_def_t; 
+
 //instruction definitions
 static instr_def_t instructions[] = {
 	{"add", A_TYPE, 0x0}, //a types
@@ -52,7 +53,8 @@ static instr_def_t instructions[] = {
 void remove_whitespace(char *s); 
 int assemble(char *input_file, char *output_file); 
 int get_reg_num(char *reg); 
-
+int get_imm(char *imm); 
+instr_def_t *find_instr(char *name); 
 
 int main(int argc, char *argv[]) {	
 	if (argc != 3) {
@@ -64,6 +66,9 @@ int main(int argc, char *argv[]) {
 	return 0; 
 }
 
+
+
+//function definitions
 void remove_whitespace(char *s) { //func to remove space from lines when being read in 
 	char *start = s; 
 	char *end;
@@ -104,8 +109,48 @@ int assemble(char *input_file, char *output_file) {
 			tokens[token_count++] = token;
 			token = strtok(NULL, " ,\t");
 		}
-		int rw = get_reg_num(tokens[1]);
-		printf("%d\n", rw); 	
+		int reg = get_reg_num(tokens[1]); 
+		int immediate = get_imm(tokens[2]); 
+		printf("reg: %d\n", reg); 
+		printf("imm: %d\n", immediate);
+
+		instr_def_t *instr = find_instr(tokens[0]); 
+		if (!instr) {
+			printf("unknown instruction '%s'\n", tokens[0]);
+			fclose(fp_input); 
+			fclose(fp_output); 
+			return -1; 
+		}
+		
+		uint32_t machine_code = 0; 
+		if (instr->format == A_TYPE) {
+			//assemble a type
+		}
+		else if (instr->format == B_TYPE){
+			//assemble b type
+			printf("it worked\n");
+		}
+		else if (instr->format == C_TYPE) {
+			//assemble c type
+		}
+		else if (instr->format == D_TYPE) {
+			//assemble d type
+		}
+		else if (instr->format == E_TYPE) {
+			//assemble e type
+		}
+		else if (instr->format == F_TYPE) {
+			//assemble f type
+		}
+		else if (instr->format == G_TYPE) {
+			//assemble g type
+		}
+		else if (instr->format == H_TYPE) {
+			//assemble h type
+		}
+		else if (instr->format == I_TYPE) {
+			//assemble i type
+		}
 	} 
 	
 
@@ -120,3 +165,15 @@ int get_reg_num(char *reg) { //func to return int version of reg
 	return -1; //invalid reg 
 }
 
+int get_imm(char *imm) {
+	return atoi(imm);
+}
+
+instr_def_t *find_instr(char *name) {
+	for (int i = 0; instructions[i].name != NULL; i++) {
+		if (strcmp(instructions[i].name, name) == 0) {
+			return &instructions[i];
+		}
+	}
+	return NULL; //instr not found
+}
