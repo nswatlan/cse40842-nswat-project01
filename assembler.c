@@ -66,12 +66,13 @@ uint16_t assemble_h(instr_def_t *instr, int ra);
 uint16_t assemble_i(instr_def_t *instr); 
 char *convert_to_bin(uint16_t decimal); 
 int assemble_interactive(char *output_file); 
+char *convert_to_hex(int decimal); 
 
 int main(int argc, char *argv[]) {	
 	if (argc == 2) {
 		assemble_interactive(argv[1]);
 	}
-	if (argc == 1 || argc > 3) {
+	if (argc == 1 || argc >4) {
 		printf("(for batch mode) Usage: %s <input.s> <output.bin>\n(for interactive mode) Usage: %s <output.bin>\n", argv[0], argv[0]); 
 		return -1; 
 	}
@@ -113,6 +114,7 @@ int assemble(char *input_file, char *output_file) {
 	}
 	
 	char line[MAX_LINE];
+	int count = 0; 
 	while (fgets(line, sizeof(line), fp_input)) { //read in each line and remove whitespace
 		remove_whitespace(line);
 		//parse each line
@@ -204,8 +206,10 @@ int assemble(char *input_file, char *output_file) {
 			machine_code = assemble_i(instr);
 			//printf("%d\n", (int)machine_code);
 		}
-		int integer_machine = (int)machine_code; 
-		fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
+		int integer_machine = (int)machine_code;
+		fprintf(fp_output, "@000%d: %s\n", count, convert_to_hex(integer_machine));
+		count++; 
+		//fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
 	} 
 	printf("assembled!\n");
 	return 0;
@@ -273,7 +277,9 @@ int assemble_interactive(char *output_file) {
 		printf("cannot open output file: %s\n", output_file); 
 		return -1; 
 	}
-	char line[MAX_LINE]; 
+	char line[MAX_LINE];
+	printf("please enter albacore intructions:\n"); 
+	int count =0; //to count number of instructions
 	while(fgets(line, sizeof(line), stdin)) {
 		line[strcspn(line, "\n")] = '\0'; 
 		//this code below is taken from assemble() which i already wrote 
@@ -363,10 +369,31 @@ int assemble_interactive(char *output_file) {
 			machine_code = assemble_i(instr);
 			//printf("%d\n", (int)machine_code);
 		}
-		int integer_machine = (int)machine_code; 
-		fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
+		int integer_machine = (int)machine_code;
+		  
+		fprintf(fp_output, "@000%d: %s\n", count, convert_to_hex(integer_machine)); 
+		count++; 
+		//comment out for now because trying to write .mem file
+		//fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
 	} 
-	printf("hello world\n"); 
+	char *quit_code = "f000";
+	fprintf(fp_output, "@000%d: %s\n",count, quit_code); 
+	printf("\nassembled!\n");
+	return 0; 
+}
+//func to convert decimal to hex (for .mem file)
+char *convert_to_hex(int decimal) { 
+    int width = 4;  //16 bits for 4 hex digits
+    char digits[] = "0123456789ABCDEF";
+    char *hex = malloc(width + 1); // +1 for null char 
+	//divide by 16, recording the remainders backwards
+    for (int i = width - 1; i >= 0; i--) {
+        int remainder = decimal % 16;
+        hex[i] = digits[remainder];
+        decimal = decimal / 16;
+    }
+    hex[width] = '\0'; //null terminate
+	return hex; 
 }
 /*
 //func to convert decimal machine code to binary
