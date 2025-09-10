@@ -1,7 +1,7 @@
 albaCore Assembler 
 
 This project is meant to create an assembler program for Dr. Jay Brockman's 
-albaCore instruction set. Via command line arguments, the in batch mode the program 
+albaCore instruction set. Via command line arguments, in batch mode the program 
 takes in two files, an input (written assembly code) file name and an output (.mem 
 file) file name. The program will create the output file and write the .mem file
 contents to it. In interactive mode, the user can input their own program in albacore 
