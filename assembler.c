@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define MAX_LINE 100 //idk why 100 i may increase or decrease
+#define MAX_LINE 100 //idk why 100
 
 //struct and enum
 typedef enum { //instruction formats (i made them up based on the instruction set)
@@ -95,8 +95,7 @@ void remove_whitespace(char *s) { //func to remove space from lines when being r
 	while (end > start && isspace(*end)) { //remove trailing whitespace
 		end--; 
 	}
-	*(end + 1) = '\0'; //null terminate s
-	//may need to move s to beginning 
+	*(end + 1) = '\0'; //null terminate s 
 }
 
 //main (not main() but the main) function that will do most of the work
@@ -127,12 +126,7 @@ int assemble(char *input_file, char *output_file) {
 			tokens[token_count++] = token;
 			token = strtok(NULL, " ,\t");
 		}
-		/*
-		int reg = get_reg_num(tokens[1]); 
-		int immediate = get_imm(tokens[2]); 
-		printf("reg: %d\n", reg); 
-		printf("imm: %d\n", immediate);
-		*/
+	
 		instr_def_t *instr = find_instr(tokens[0]); 
 		if (!instr) {
 			printf("unknown instruction '%s'\n", tokens[0]);
@@ -148,15 +142,12 @@ int assemble(char *input_file, char *output_file) {
 			int ra = get_reg_num(tokens[2]);  
 			int rb = get_reg_num(tokens[3]);
 			machine_code = assemble_a(instr, rw, ra, rb); 
-			//printf("%d\n", (int)machine_code); 
-			//printf("binary: %s\n", convert_to_bin((int)(machine_code)));
 		}
 		else if (instr->format == B_TYPE){
 			//assemble b type
 			int rw = get_reg_num(tokens[1]); 
 			int imm8 = get_imm(tokens[2]); 
 			machine_code = assemble_b(instr, rw, imm8); 
-			//printf("%d\n", (int)machine_code); 
 		}
 		else if (instr->format == C_TYPE) {
 			//assemble c type
@@ -164,7 +155,7 @@ int assemble(char *input_file, char *output_file) {
 			int rb = get_reg_num(tokens[2]); 
 			int imm4 = get_imm(tokens[3]);
 			machine_code = assemble_c(instr, rw, imm4, rb); 
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == D_TYPE) {
 			//assemble d type
@@ -172,44 +163,43 @@ int assemble(char *input_file, char *output_file) {
 			int rb = get_reg_num(tokens[2]);
 			int imm4 = get_imm(tokens[3]);
 			machine_code = assemble_d(instr, imm4, ra, rb); 
-			//printf("%d\n", (int)machine_code);
+			
 
 		}
 		else if (instr->format == E_TYPE) {
 			//assemble e type
 			int imm8 = get_imm(tokens[1]);
 			machine_code = assemble_e(instr, imm8);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == F_TYPE) {
 			//assemble f type
 			int rb = get_reg_num(tokens[1]);
 			int imm8 = get_imm(tokens[2]);
 			machine_code = assemble_f(instr, imm8, rb);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == G_TYPE) {
 			//assemble g type
 			int imm12 = get_imm(tokens[1]);
 			machine_code = assemble_g(instr, imm12);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == H_TYPE) {
 			//assemble h type
 			//jr ra
 			int ra = get_reg_num(tokens[1]); 
 			machine_code = assemble_h(instr, ra);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == I_TYPE) {
 			//assemble i type
 			machine_code = assemble_i(instr);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		int integer_machine = (int)machine_code;
 		fprintf(fp_output, "@000%d: %s\n", count, convert_to_hex(integer_machine));
-		count++; 
-		//fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
+		count++;  
 	} 
 	printf("assembled!\n");
 	return 0;
@@ -311,15 +301,13 @@ int assemble_interactive(char *output_file) {
 			int ra = get_reg_num(tokens[2]);  
 			int rb = get_reg_num(tokens[3]);
 			machine_code = assemble_a(instr, rw, ra, rb); 
-			//printf("%d\n", (int)machine_code); 
-			//printf("binary: %s\n", convert_to_bin((int)(machine_code)));
 		}
 		else if (instr->format == B_TYPE){
 			//assemble b type
 			int rw = get_reg_num(tokens[1]); 
 			int imm8 = get_imm(tokens[2]); 
 			machine_code = assemble_b(instr, rw, imm8); 
-			//printf("%d\n", (int)machine_code); 
+			 
 		}
 		else if (instr->format == C_TYPE) {
 			//assemble c type
@@ -327,7 +315,7 @@ int assemble_interactive(char *output_file) {
 			int rb = get_reg_num(tokens[2]); 
 			int imm4 = get_imm(tokens[3]);
 			machine_code = assemble_c(instr, rw, imm4, rb); 
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == D_TYPE) {
 			//assemble d type
@@ -335,46 +323,45 @@ int assemble_interactive(char *output_file) {
 			int rb = get_reg_num(tokens[2]);
 			int imm4 = get_imm(tokens[3]);
 			machine_code = assemble_d(instr, imm4, ra, rb); 
-			//printf("%d\n", (int)machine_code);
+			
 
 		}
 		else if (instr->format == E_TYPE) {
 			//assemble e type
 			int imm8 = get_imm(tokens[1]);
 			machine_code = assemble_e(instr, imm8);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == F_TYPE) {
 			//assemble f type
 			int rb = get_reg_num(tokens[1]);
 			int imm8 = get_imm(tokens[2]);
 			machine_code = assemble_f(instr, imm8, rb);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == G_TYPE) {
 			//assemble g type
 			int imm12 = get_imm(tokens[1]);
 			machine_code = assemble_g(instr, imm12);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == H_TYPE) {
 			//assemble h type
 			//jr ra
 			int ra = get_reg_num(tokens[1]); 
 			machine_code = assemble_h(instr, ra);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		else if (instr->format == I_TYPE) {
 			//assemble i type
 			machine_code = assemble_i(instr);
-			//printf("%d\n", (int)machine_code);
+			
 		}
 		int integer_machine = (int)machine_code;
 		  
 		fprintf(fp_output, "@000%d: %s\n", count, convert_to_hex(integer_machine)); 
 		count++; 
-		//comment out for now because trying to write .mem file
-		//fwrite(&integer_machine, sizeof(int),1,fp_output); //fwrite to write binary 
+		
 	} 
 	char *quit_code = "f000";
 	fprintf(fp_output, "@000%d: %s\n",count, quit_code); 
@@ -395,28 +382,3 @@ char *convert_to_hex(int decimal) {
     hex[width] = '\0'; //null terminate
 	return hex; 
 }
-/*
-//func to convert decimal machine code to binary
-char *convert_to_bin(uint16_t decimal) {
-	int bits = 16; 
-	char temp[bits];
-	int index = 0;
-	//divide by 2 until quotient is 0
-	while (decimal > 0 && index < 16) {
-		int remainder = decimal % 2;
-		temp[index++] = remainder + '0'; //will print 0 if r is 0 and 1 if r is 1
-		decimal = decimal / 2; 
-	}
-	while (index < bits) {
-		temp[index++] = '0'; //leading 0s
-	}
-	//reverse into right order
-	char *bin = malloc(bits + 1); // + 1 for null
-	for (int i = 0; i < bits; i++) {
-		bin[i] = temp[15-i]; 
-	}
-	bin[bits] = '\0'; 
-
-	return bin; 
-}
-*/
