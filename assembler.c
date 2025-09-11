@@ -285,9 +285,9 @@ int assemble_interactive(char *output_file) {
 			token = strtok(NULL, " ,\t");
 		}
 		instr_def_t *instr = find_instr(tokens[0]); 
-		if (instr->format == I_TYPE) {
-			break; 
-		}
+		//if (instr->format == I_TYPE) {
+		//	break; 
+		//}
 		if (!instr) {
 			printf("unknown instruction '%s'\n", tokens[0]); 
 			fclose(fp_output); 
@@ -355,16 +355,19 @@ int assemble_interactive(char *output_file) {
 		else if (instr->format == I_TYPE) {
 			//assemble i type
 			machine_code = assemble_i(instr);
-			
 		}
 		int integer_machine = (int)machine_code;
 		  
 		fprintf(fp_output, "@000%d: %s\n", count, convert_to_hex(integer_machine)); 
 		count++; 
-		
+		if (instr->format == I_TYPE) {
+			break; 
+		}
 	} 
-	char *quit_code = "f000";
-	fprintf(fp_output, "@000%d: %s\n",count, quit_code); 
+	char *quit_code = "F000";
+	if (count != 8) {
+		fprintf(fp_output, "@000%d: %s\n",count, quit_code); 
+	}
 	printf("\nassembled!\n");
 	return 0; 
 }
